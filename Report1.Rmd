@@ -1,10 +1,9 @@
 ---
 title: "Project 1 - Binance Coin Study"
 author: 
-- "Anand Balan (axb173130@utdallas.edu)"
-- "Gunjan Munjal (gxm171430@utdallas.edu)"
-- "Pavithra Kannan Kamalakannan Ushakannan (pxk170930@utdallas.edu)"
-date: "10/9/2018"
+
+- "Pavithra Kamalakannan Ushakannan 
+
 output: html_document
 ---
 
@@ -75,7 +74,7 @@ varianceOfDistibution<-var(frequencyDataFrame2$`Number of Users`)
 print(varianceOfDistibution)
 ```
 
-The mean frequency of number of sales `r meanOfDistribution`
+The mean frequency of number of sales `r meanOfDistribution` and variance is `r varianceOfDistibution`
 
 ```{r}
 #-------- Plotting 100% of the data ----------
@@ -148,7 +147,13 @@ meanOfDistribution2 <- mean(freqDataFrame2$`Number of Users`)
 print(meanOfDistribution2)
 varianceOfDistibution2<-var(freqDataFrame2$`Number of Users`)
 print(varianceOfDistibution2)
+```
 
+
+The mean frequency of number of sales `r meanOfDistribution2` and variance is `r varianceOfDistibution2`
+
+
+```{r}
 #---------Plotting 100% of the data---------
 attach(freqDataFrame2)
 plot(y=freqDataFrame2$`Number of Users`, 
