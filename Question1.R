@@ -15,7 +15,7 @@ colnames(frequencyDataFrame)<-c("SellerID","Count")
 countOfCount<-table(frequencyDataFrame$Count)
 frequencyDataFrame2<-as.data.frame(countOfCount)
 colnames(frequencyDataFrame2)<-c("Token Count Sold","Number of Users")
-mean(frequencyDataFrame2$`Number of Users`)
+
 #--------Plotting 100% of the data----------
 
 attach(frequencyDataFrame2)
