@@ -14,13 +14,13 @@ frequencyDataFrame<-as.data.frame(countOfSeller)
 colnames(frequencyDataFrame)<-c("SellerID","Count")
 countOfCount<-table(frequencyDataFrame$Count)
 frequencyDataFrame2<-as.data.frame(countOfCount)
-colnames(frequencyDataFrame2)<-c("No of users sold","Amount Sold")
+colnames(frequencyDataFrame2)<-c("Token Count Sold","Number of Users")
 
 #--------Plotting 100% of the data----------
 
 attach(frequencyDataFrame2)
-plot(x=frequencyDataFrame2$`Amount Sold`, 
-     y=frequencyDataFrame2$`No of users sold`, 
+plot(x=frequencyDataFrame2$`Number of Users`, 
+     y=frequencyDataFrame2$`Token Count Sold`, 
      xlab="Number of Users", 
      ylab="No of times a token was sold",
      main="Number of times user sells token",
@@ -28,8 +28,8 @@ plot(x=frequencyDataFrame2$`Amount Sold`,
 
 #Removing 99% of the data because distribution is not clearly visible with 100%
 
-plot(x=frequencyDataFrame2$`Amount Sold`, 
-     y=frequencyDataFrame2$`No of users sold`, 
+plot(x=frequencyDataFrame2$`Number of Users`, 
+     y=frequencyDataFrame2$`Token Count Sold`,  
      xlab="Number of Users", 
      ylab="No of times a token was sold",
      main="Number of times user sells token",
@@ -44,14 +44,14 @@ freqDataFrame<-as.data.frame(countOfBuyer)
 colnames(freqDataFrame)<-c("ReceiverID","Frequency")
 countOfFrequency<-table(freqDataFrame$Frequency)
 freqDataFrame2<-as.data.frame(countOfFrequency)
-colnames(freqDataFrame2)<-c("No of users Bought","Amount Bought")
+colnames(freqDataFrame2)<-c("Token Count Bought","Number of Users")
 
 
 #---------Plotting 100% of the data---------
 
 attach(freqDataFrame2)
-plot(x=freqDataFrame2$`Amount Bought`, 
-     y=freqDataFrame2$`No of users Bought`, 
+plot(x=freqDataFrame2$`Number of Users`, 
+     y=freqDataFrame2$`Token Count Bought`, 
      xlab="Number of Users", 
      ylab="No of times a token was bought",
      main="Number of times user buys token",
@@ -59,8 +59,8 @@ plot(x=freqDataFrame2$`Amount Bought`,
 
 #Removing 99% of the data because distribution is not clearly visible with 100%
 
-plot(x=freqDataFrame2$`Amount Bought`, 
-     y=freqDataFrame2$`No of users Bought`, 
+plot(x=freqDataFrame2$`Number of Users`, 
+     y=freqDataFrame2$`Token Count Bought`, 
      xlab="Number of Users", 
      ylab="No of times a token was bought",
      main="Number of times user buys token",
