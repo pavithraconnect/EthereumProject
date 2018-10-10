@@ -15,25 +15,25 @@ colnames(frequencyDataFrame)<-c("SellerID","Count")
 countOfCount<-table(frequencyDataFrame$Count)
 frequencyDataFrame2<-as.data.frame(countOfCount)
 colnames(frequencyDataFrame2)<-c("Token Count Sold","Number of Users")
-
+mean(frequencyDataFrame2$`Number of Users`)
 #--------Plotting 100% of the data----------
 
 attach(frequencyDataFrame2)
-plot(x=frequencyDataFrame2$`Number of Users`, 
-     y=frequencyDataFrame2$`Token Count Sold`, 
-     xlab="Number of Users", 
-     ylab="No of times a token was sold",
+plot(y=frequencyDataFrame2$`Number of Users`, 
+     x=frequencyDataFrame2$`Token Count Sold`, 
+     ylab="Number of Users", 
+     xlab="No of times a token was sold",
      main="Number of times user sells token",
      type="o")
 
 #Removing 99% of the data because distribution is not clearly visible with 100%
 
-plot(x=frequencyDataFrame2$`Number of Users`, 
-     y=frequencyDataFrame2$`Token Count Sold`,  
-     xlab="Number of Users", 
-     ylab="No of times a token was sold",
+plot(y=frequencyDataFrame2$`Number of Users`, 
+     x=frequencyDataFrame2$`Token Count Sold`,  
+     ylab="Number of Users", 
+     xlab="No of times a token was sold",
      main="Number of times user sells token",
-     xlim = c(0,165.75),
+     ylim = c(0,165.75),
      type="o")
 
 
@@ -50,20 +50,20 @@ colnames(freqDataFrame2)<-c("Token Count Bought","Number of Users")
 #---------Plotting 100% of the data---------
 
 attach(freqDataFrame2)
-plot(x=freqDataFrame2$`Number of Users`, 
-     y=freqDataFrame2$`Token Count Bought`, 
-     xlab="Number of Users", 
-     ylab="No of times a token was bought",
+plot(y=freqDataFrame2$`Number of Users`, 
+     x=freqDataFrame2$`Token Count Bought`, 
+     ylab="Number of Users", 
+     xlab="No of times a token was bought",
      main="Number of times user buys token",
      type="o")
 
 #Removing 99% of the data because distribution is not clearly visible with 100%
 
-plot(x=freqDataFrame2$`Number of Users`, 
-     y=freqDataFrame2$`Token Count Bought`, 
-     xlab="Number of Users", 
-     ylab="No of times a token was bought",
+plot(y=freqDataFrame2$`Number of Users`, 
+     x=freqDataFrame2$`Token Count Bought`, 
+     ylab="Number of Users", 
+     xlab="No of times a token was bought",
      main="Number of times user buys token",
-     xlim = c(0,2529.94),
+     ylim = c(0,2529.94),
      type="o")
 
