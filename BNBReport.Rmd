@@ -4,10 +4,9 @@ author:
 - Anand Balan (axb173130@utdallas.edu)
 - Gunjan Munjal (gxm171430@utdallas.edu)
 - Pavithra Kamalakannan Ushakannan (pxk170930@utdallas.edu)
-date: "11/02/2018"
+date: "12/01/2018"
 output:
   html_document: default
-  pdf_document: default
 ---
 <style>
 body {
@@ -51,13 +50,13 @@ The data file corresponding to Binance Coin, _networkbnbTX.txt_, consist of four
 
 1. Seller User ID 
 2. Buyer User ID
-3. Unix Timestamp
-4. Amount (in sub-units)
+3. Unix date
+4. amount (in sub-units)
 
 ```{r, warning = FALSE}
-dftoken <- read.table("networkbnbTX.txt", header = FALSE)
-names(dftoken)<-c("SenderID","ReceiverID","TimeStamp","Amount")
-print(head(dftoken,10))
+binanceTokenGraph <- read.table("networkbnbTX.txt", header = FALSE)
+names(binanceTokenGraph)<-c("seller","buyer","date","amount")
+print(head(binanceTokenGraph,10))
 ```
 
 The price file corresponding to Binance Coin, _bnb.txt_, consist of seven columns:  
@@ -82,10 +81,10 @@ To identify and remove outliers, first, we define an outlier with respect to the
 
 ```{r, warning = FALSE}
 
-dftoken <- read.table("networkbnbTX.txt", header = FALSE)
-names(dftoken)<-c("SellerID","ReceiverID","TimeStamp","Amount")
-dftokenDF <- as.data.frame(dftoken)
-outliers <- dftokenDF[dftokenDF$Amount > total_supply]
+binanceTokenGraph <- read.table("networkbnbTX.txt", header = FALSE)
+names(binanceTokenGraph)<-c("SellerID","buyer","date","amount")
+binanceTokenGraphDF <- as.data.frame(binanceTokenGraph)
+outliers <- binanceTokenGraphDF[binanceTokenGraphDF$amount > total_supply]
 print(paste("Length of Outliers",length(outliers)))
 ```
 
@@ -97,7 +96,7 @@ The primary objective for first part of the project was to find the distribution
 
 ```{r, warning = FALSE}
 #---------- Number of sales ---------
-countOfSeller<-table(dftoken$SellerID) # gives the frequency at which users sells tokens
+countOfSeller<-table(binanceTokenGraph$SellerID) # gives the frequency at which users sells tokens
 frequencyDataFrame<-as.data.frame(countOfSeller)
 colnames(frequencyDataFrame)<-c("SellerID","Count")
 countOfCount<-table(frequencyDataFrame$Count) # gives the number of users who have made 'x' sales.
@@ -110,7 +109,7 @@ varianceOfDistibution<-var(frequencyDataFrame2$`Number of Users`)
 #print(paste("Variance of Distribution",varianceOfDistibution))
 ```
 
-The mean frequency of number of sales `r meanOfDistribution` and variance of `r varianceOfDistibution`
+The mean frequency of number of sales **`r meanOfDistribution`** and variance of **`r varianceOfDistibution`**.
 
 ```{r}
 #-------- Plotting 100% of the data ----------
@@ -157,15 +156,15 @@ negBin
 ```
 
 
-Based on analysis, number of times user sells a token follows a negative binomial distribution with mean of `r meanOfDistribution` and a variance of `r varianceOfDistibution`.
+Based on analysis, number of times user sells a token follows a negative binomial distribution with mean of **`r meanOfDistribution`** and a variance of **`r varianceOfDistibution`**.
 
 ##1.3 Distribution of buying tokens
 
 ```{r, warning = FALSE}
 #---------- Number of purchases ---------
-countOfBuyer<-table(dftoken$ReceiverID)
+countOfBuyer<-table(binanceTokenGraph$buyer)
 freqDataFrame<-as.data.frame(countOfBuyer)
-colnames(freqDataFrame)<-c("ReceiverID","Frequency")
+colnames(freqDataFrame)<-c("buyer","Frequency")
 countOfFrequency<-table(freqDataFrame$Frequency)
 freqDataFrame2<-as.data.frame(countOfFrequency)
 colnames(freqDataFrame2)<-c("Token Count Bought","Number of Users")
@@ -176,7 +175,7 @@ varianceOfDistibution2<-var(freqDataFrame2$`Number of Users`)
 #print(paste("Variance of Distribution",varianceOfDistibution2))
 ```
 
-The mean frequency of number of sales `r meanOfDistribution2` and variance of `r varianceOfDistibution2`
+The mean frequency of number of sales **`r meanOfDistribution2`** and variance of **`r varianceOfDistibution2`**.
 
 ```{r, warning = FALSE}
 #---------Plotting 100% of the data---------
@@ -219,7 +218,7 @@ negBin <- fitdistr(freqDataFrame2$`Number of Users`, densfun = "negative binomia
 negBin
 ```
 
-Based on analysis, number of times user buys a token follows a negative binomial distribution with mean of `r meanOfDistribution2` and a variance of `r varianceOfDistibution2`.
+Based on analysis, number of times user buys a token follows a negative binomial distribution with mean of **`r meanOfDistribution2`** and a variance of **`r varianceOfDistibution2`**.
 
 #2. Layering of token transactions based on amount.
 
@@ -238,7 +237,7 @@ To make the file readable, we first cleaned both the data files and assigned sui
 ```{r, warning = FALSE}
 
 binanceTokenGraph <- read.table("networkbnbTX.txt", header = FALSE)
-names(binanceTokenGraph)<-c("SellerID","ReceiverID","TimeStamp","Amount")
+names(binanceTokenGraph)<-c("SellerID","buyer","date","amount")
 
 tokenPrices <- read.table("bnb.txt", header=TRUE, sep="\t")
 names(tokenPrices) <- c("date", "open", "high", "low","close", "volume", "cap")
@@ -247,7 +246,7 @@ names(tokenPrices) <- c("date", "open", "high", "low","close", "volume", "cap")
 The next part of the process was to combine the two files, _networkbnbTX.txt_ and _bnb.txt_, on the date column. In _bnb.txt_, the date column was available but for _networkbnbTX.txt_, we converted the UNIX time stamps into dates.
 This enabled us to combine the files on respective date columns.
 ```{r, echo=FALSE, warning = FALSE}
-dftoken$TimeStamp <- format(as.Date(as.POSIXct(as.numeric(as.character(dftoken$TimeStamp)),origin="1970/01/01",tz="GMT"), tz="GMT"), "%m/%d/%Y")
+binanceTokenGraph$date <- format(as.Date(as.POSIXct(as.numeric(as.character(binanceTokenGraph$date)),origin="1970/01/01",tz="GMT"), tz="GMT"), "%m/%d/%Y")
 ```
 
 
@@ -259,19 +258,19 @@ names(tokenPrices)<-c("date","close", "volume","tokens_transacted")
 The data was available for different range of dates so the merger was done by taking the intersection of the date column in the two given files.
 
 ```{r, warning = FALSE}
-tokenPrices <- tokenPrices[tokenPrices$date %in% unique(dftoken$TimeStamp), ]
-dftoken <- dftoken[dftoken$TimeStamp %in% tokenPrices$date, ]
+tokenPrices <- tokenPrices[tokenPrices$date %in% unique(binanceTokenGraph$date), ]
+binanceTokenGraph <- binanceTokenGraph[binanceTokenGraph$date %in% tokenPrices$date, ]
 ```
 
-We converted the subunits into tokens, and the number of tokens transacted on the dates available in the intersection region were added to _binanceTokenGraph_ as a new column _AmountInTokens_, sorted by chronological ordering.
+We converted the subunits into tokens, and the number of tokens transacted on the dates available in the intersection region were added to _binanceTokenGraph_ as a new column _amountInTokens_, sorted by chronological ordering.
 ```{r, warning = FALSE}
-dftoken$AmountInTokens <- (dftoken$Amount / (10^18)) 
+binanceTokenGraph$amountInTokens <- (binanceTokenGraph$amount / (10^18)) 
 ```
 
 
 ```{r, warning = FALSE}
 tokenPrices <- tokenPrices[with(tokenPrices, order(date)),]
-dftoken <- dftoken[with(dftoken, order(TimeStamp)),]
+binanceTokenGraph <- binanceTokenGraph[with(binanceTokenGraph, order(date)),]
 ```
 
 To calculate the number of transactions in respective layers and the cumulative amount of transactions (in USD) in each layer, we follow the algorithm states below-
@@ -282,21 +281,21 @@ To calculate the number of transactions in respective layers and the cumulative 
 4. Add the tokenPrices of every day to get the total amount (in USD) of the transactions in that layer.
 
 ```{r, warning = FALSE}
-maxAmount <- max(dftoken$AmountInTokens)
+maxamount <- max(binanceTokenGraph$amountInTokens)
 i <- 1
 maxCorr <- -2
 no_of_txn_in_layer <- c()
 total_amount_trans_in_layer <- c()
 
 repeat {
-  threshold <- as.integer(((i/31) * maxAmount))
-  transactions_in_layer <- dftoken[dftoken$AmountInTokens >= threshold, ]
+  threshold <- as.integer(((i/31) * maxamount))
+  transactions_in_layer <- binanceTokenGraph[binanceTokenGraph$amountInTokens >= threshold, ]
   no_of_records <- nrow(transactions_in_layer)
   if (no_of_records == 0) {
     break
   }
-  no_of_transactions_per_day <- aggregate(AmountInTokens ~ TimeStamp, transactions_in_layer, length)
-  total_amount_trans_per_day <- aggregate(AmountInTokens ~ TimeStamp, transactions_in_layer, sum)
+  no_of_transactions_per_day <- aggregate(amountInTokens ~ date, transactions_in_layer, length)
+  total_amount_trans_per_day <- aggregate(amountInTokens ~ date, transactions_in_layer, sum)
   names(no_of_transactions_per_day) <- c("date", "no_of_transactions")
   names(total_amount_trans_per_day) <- c("date", "total_amount_per_day")
   
@@ -306,7 +305,7 @@ repeat {
   i <- i + 1
 }
 ```
-We calculated the correlation values for a set of numbers and narrowed down to 31 as it gives the highest correlation value.
+We calculated the **correlation values** for a set of numbers and **narrowed down to 31 as it gives the highest correlation value**.
 ```{r, warning = FALSE}
 library(knitr)
 library(kableExtra)
@@ -327,7 +326,9 @@ cor_value <- cor(corr_df, use="complete.obs", method="pearson")
 library(ggplot2)
 ggplot(corr_df, aes(x=no_of_txn, y=amount_in_usd_transacted, group=1)) + geom_line()
 ```
-The correlation value is : `r cor_value`
+
+**The correlation value is : `r cor_value[2]`**
+
 #3. Analysing behaviour of active user
 This part of the project  was dedicated towards finding how the most active users in one token behave in other token networks and fit a distribution for the number of unique tokens they invest in.
 
@@ -337,7 +338,7 @@ The goal of this step is to find the most active buyers and sellers of the prima
 ```{r, warning = FALSE}
 # read our primary token...
 tokenGraph <- read.table("networkbnbTX.txt", header = FALSE)
-names(tokenGraph)<-c("SellerID","ReceiverID","TimeStamp","Amount")
+names(tokenGraph)<-c("SellerID","buyer","date","amount")
 
 # get the top ten active sellers in primary token...
 sellerFreq <- data.frame(table(tokenGraph$SellerID))
@@ -346,7 +347,7 @@ sellerFreq <- sellerFreq[order(-sellerFreq$txn_count), ]
 sellerFreq <- sellerFreq[1:10,]
 
 # get the top ten active buyers in primary token...
-buyerFreq <- data.frame(table(tokenGraph$ReceiverID))
+buyerFreq <- data.frame(table(tokenGraph$buyer))
 names(buyerFreq) <- c("buyer", "txn_count")
 buyerFreq <- buyerFreq[order(-buyerFreq$txn_count), ]
 buyerFreq <- buyerFreq[1:10,]
@@ -382,14 +383,14 @@ for (tokenGraphFile in tokenGraphFiles) {
   if (tokenGraphFile != "networkbnbTX.txt") {
     # read the token graph into the form we need...
     tempTokenGraph <- read.table(paste("data", "tokenGraphs", tokenGraphFile, sep="/"), header = FALSE)
-    names(tempTokenGraph)<-c("SellerID","ReceiverID","TimeStamp","Amount")
+    names(tempTokenGraph)<-c("SellerID","buyer","date","amount")
     
     # find the number of times every seller has made a sale of the token in this iteration...
     tempSellerFreq <- data.frame(table(tempTokenGraph$SellerID))
     names(tempSellerFreq) <- c("user_id", "txn_count")
     
     # find the number of times every buyer has made a purchase of the token in this iteration...
-    tempBuyerFreq <- data.frame(table(tempTokenGraph$ReceiverID))
+    tempBuyerFreq <- data.frame(table(tempTokenGraph$buyer))
     names(tempBuyerFreq) <- c("user_id", "txn_count")
     
     # filter only the sellers using our list of most active sellers/buyers in our primary token...
@@ -473,14 +474,245 @@ qqcomp  (list(weibull, lnorm, exp ), legendtext = plot.legend)
 ppcomp  (list(weibull, lnorm, exp ), legendtext = plot.legend)
 ```
 
+#4. Predicting the price return on Day t
 
-#4. Conclusion:
+This part of the project  was dedicated towards creating a multiple linear regression model to explain price return on day t, by extracting at least three features from the token network at day t-1.
+
+### Features:
+1. How the "Most Important Users" behaved the previous day? Whether they sold more or bought more?
+2. How many other unique users follow these "Most Important Users" behavior on the previous day?
+3. What was the predominant trend on the previous day? Was the token price decreasing mostly or increasing?
+4. What is the quantum of the increase or decrease in the price fluctuation on the previous day?
+Find an intersection between the date ranges in both the data set and sort the dataframe in decreasing order of date.
+
+We will be using the same token that we used for study in the previous projects.
+
+```{r, warning = FALSE}
+NEUTRAL_CONST = "N"
+SELLING_DAY_CONST = "S"
+BUYING_DAY_CONST = "B"
+INCREASING_TREND_CONST = "I"
+DECREASING_TREND_CONST ="D"
+DATE_FORMAT_CONST = "%m/%d/%Y"
+
+
+# Read the token graph.
+binanceTokenGraph <- read.table("networkbnbTX.txt", header = FALSE)
+names(binanceTokenGraph)<-c("seller","buyer","date","amount")
+
+# Convert the timestamp to date format.
+binanceTokenGraph$date <- format(as.Date(as.POSIXct(as.numeric(as.character(binanceTokenGraph$date)),origin="1970/01/01",tz="GMT"), tz="GMT"), DATE_FORMAT_CONST)
+
+# Read the token prices
+tokenPrices <- read.table("bnb.txt", header=TRUE, sep="\t")
+names(tokenPrices) <- c("date", "open", "high", "low","close", "volume", "cap")
+tokenPrices$volume <- as.numeric(gsub(",", "", tokenPrices$volume))
+
+
+```
+
+
+We will find the the total number of tokens sold and bought by each person on each day.
+
+```{r, warning = FALSE}
+tokenPrices <- tokenPrices[tokenPrices$date %in% unique(binanceTokenGraph$date), ]
+binanceTokenGraph <- binanceTokenGraph[binanceTokenGraph$date %in% tokenPrices$date, ]
+
+binanceTokenGraph <- binanceTokenGraph[rev(order(as.Date(binanceTokenGraph$date, format=DATE_FORMAT_CONST))),]
+tokenPrices <- tokenPrices[rev(order(as.Date(tokenPrices$date, format=DATE_FORMAT_CONST))),]
+
+tokensSoldPerUserPerDay <- aggregate(amount~date+seller, binanceTokenGraph, sum)
+
+tokensBoughtPerUserPerDay <- aggregate(amount~date+buyer, binanceTokenGraph, sum)
+```
+
+Using this, we will find the the total number of tokens transacted by each person on each day and find the difference between the number of tokens sold and the number of tokens bought. If number of tokens sold > number of tokens bought, then the difference will be positive; denotes that there were more sales than purchases.
+
+```{r, warning = FALSE}
+
+tokensTransactedPerUserPerDay <- merge(tokensSoldPerUserPerDay, tokensBoughtPerUserPerDay, by.x=c("date", "seller"), by.y=c("date", "buyer"), all=TRUE)
+tokensTransactedPerUserPerDay[is.na(tokensTransactedPerUserPerDay)] <- 0
+
+names(tokensTransactedPerUserPerDay)<-c("date","user","tokensSold","tokensBought")
+tokensTransactedPerUserPerDay$tokensTransacted <- (tokensTransactedPerUserPerDay$tokensSold - tokensTransactedPerUserPerDay$tokensBought)
+
+tokenPrices <- tokenPrices[order(as.Date(tokenPrices$date, format=DATE_FORMAT_CONST)),]
+
+#output column
+for (priceIdx in 3:nrow(tokenPrices)-1) 
+{ 
+  tokenPrices$predicted_price_change[priceIdx] <- ( (tokenPrices$close[priceIdx] - tokenPrices$close[priceIdx-1])/ tokenPrices$close[priceIdx-1])
+}
+
+tokenPrices$predicted_price_change[is.na(tokenPrices$predicted_price_change)] <- 0
+
+#predicted price
+for( i in 3:nrow(tokenPrices)-1){
+tokenPrices$predicted_price[i] = tokenPrices$close[i-1] + tokenPrices$predicted_price_change[i-1]
+}
+
+#sort by date
+tokenPrices$profitability <- (tokenPrices$open - tokenPrices$close)
+
+```
+To find the difference in opening price and closing price on each day of the token, we use opening price instead of closing price from previous day because the difference between them is almost negligible.
+
+The data frame containing the number of transactions per day per user is merged with the token prices (including the profitability column). This gives the number of days an user has made any transaction. These are the days when (s)he had made a bet on price change between that day and next day.
+Find the number of days an user made accurate prediction on the price change
+
+```{r, warning=FALSE}
+mergedDF <- merge(tokensTransactedPerUserPerDay, tokenPrices, by.x=c("date"), by.y=c("date"))
+
+noOfPredictions <- aggregate(tokensTransacted~user, mergedDF, length)
+
+correctPredictions <- aggregate(tokensTransacted~user, mergedDF[((mergedDF$tokensTransacted > 0 & mergedDF$profitability > 0) | (mergedDF$tokensTransacted < 0 & mergedDF$profitability < 0)),], length)
+  print(head(correctPredictions))
+
+```
+Combine the produced data frames to a vip dataframe and find their prediction accuracy, and get the VIP users with very high accuracy and a decent number of txns and the VIP users with many txns but decent accuracy.
+
+```{r, warning=FALSE}
+ vip <- merge(correctPredictions, noOfPredictions, by=c("user"), all=TRUE)
+ rm(noOfPredictions)
+ rm(correctPredictions)
+ names(vip) <- c("user", "correctPredictions", "totalPredictions")
+ vip[is.na(vip)] <- 0
+ vip$predictionAccuracy <- (vip$correctPredictions/vip$totalPredictions)
+
+ vipWithHighAccuracyOrFreqTxn <- vip[((vip$totalPredictions > 10 & vip$predictionAccuracy > 0.6) | (vip$totalPredictions > 100 & vip$predictionAccuracy > 0.49)),]
+
+ vipWithFreqTxn <- vip[(vip$totalPredictions > 100 & vip$predictionAccuracy > 0.49),]
+  print(head(vipWithHighAccuracyOrFreqTxn,10))
+  print(head(vipWithFreqTxn))
+
+```
+Now we filter the transactions made by our chosen VIP users on each day and use an algorithm to find if the day was predominantly a selling day or a buying day or neither.
+```{r, warning=FALSE}
+
+
+ typeOfDayForVIPs <- aggregate(tokensTransacted~date, mergedDF[mergedDF$user %in% vipWithHighAccuracyOrFreqTxn$user,], sum)
+ typeOfDayForVIPs[typeOfDayForVIPs$tokensTransacted > 0, "vip_day_type"] <- SELLING_DAY_CONST
+ typeOfDayForVIPs[typeOfDayForVIPs$tokensTransacted < 0, "vip_day_type"] <- BUYING_DAY_CONST
+ typeOfDayForVIPs[typeOfDayForVIPs$tokensTransacted == 0, "vip_day_type"] <- NEUTRAL_CONST
+ colnames(typeOfDayForVIPs)[2] <- "vip_tokens_transacted"
+
+ 
+ 
+ #prediciton for next day: depends on the type of day today
+ for (priceIdx in 2:nrow(typeOfDayForVIPs)-1) 
+ { 
+   typeOfDayForVIPs$tokensTransacted[priceIdx] <- typeOfDayForVIPs$day_type[priceIdx-1]
+ }
+```
+We're assuming the if the high and low are close to open price and close price, respectively, then it means throughout the day the token has been following a decreasing trend. Hence, we would predict the next day price to decrease.
+
+ The quantum of decrease depends on the fluctuation on the previous day. On the other hand, if the high is closer to closing price, then the token has been following an increasing trend throughout the day. We would therefore predict an increase in closing price on the next day as well. The quantum of increase again depends on the fluctuation on the previous day.
+
+
+Note: First day trend is simply going to be "neutral" since we do not have data about 0th day.
+```{r, warning=FALSE}
+
+trendFluctuationDF <- data.frame()
+
+for (priceIdx in 2:nrow(tokenPrices)-1) { 
+  # iterate over every day except the first day. Remember, last row is first day. So, nrow(tokenPrices)-1.
+  today <- tokenPrices$date[priceIdx] # Today's date.
+  previousDayPrice <- tokenPrices[priceIdx+1,] # Get the previous day price.
+  diff_high_open <- abs(previousDayPrice$open - previousDayPrice$high) # Absolute difference between open and high.
+  diff_low_open <- abs(previousDayPrice$open - previousDayPrice$low) # Absolute difference between open and low.
+  diff_high_close <- abs(previousDayPrice$close - previousDayPrice$high) # Absolute difference between close and high.
+  diff_low_close <- abs(previousDayPrice$close - previousDayPrice$low) # Absolute difference between close and low.
+  diff_open_close <- previousDayPrice$close - previousDayPrice$open # If positive, it means upward trend.
+  fluctuation <- abs(previousDayPrice$high - previousDayPrice$low) # Absolute difference between high and low
+  
+  row <- data.frame("date" = today, "trend" = NEUTRAL_CONST, "fluctuation" = 0.0, stringsAsFactors=FALSE)
+  
+  if (diff_high_open < diff_high_close & diff_low_close < diff_low_open) {
+    # High is near open and low is near close - decreasing trend
+    row[row$trend == NEUTRAL_CONST, "trend"] <- DECREASING_TREND_CONST
+    row[1, "fluctuation"] <- fluctuation
+  } else if (diff_high_close < diff_high_open & diff_low_open < diff_low_close) {
+    # High is near close and low is near open - increasing trend
+    row[row$trend == NEUTRAL_CONST, "trend"] <- INCREASING_TREND_CONST
+    row[1, "fluctuation"] <- fluctuation
+  } else if ((diff_high_close < diff_high_open & diff_low_close < diff_low_open)
+             | (diff_high_open < diff_high_close & diff_low_open < diff_low_close)) {
+    # High and low are near close or open -> see diff between close price and open price to determine trend.
+    if (diff_open_close < 0) {
+      # decreasing trend
+      row[row$trend == NEUTRAL_CONST, "trend"] <- DECREASING_TREND_CONST
+    } else {
+      # increasing trend
+      row[row$trend == NEUTRAL_CONST, "trend"] <- INCREASING_TREND_CONST
+    }
+    row[1, "fluctuation"] <- fluctuation
+  }
+  trendFluctuationDF <- rbind(row, trendFluctuationDF)
+}
+rm(row)
+rm(previousDayPrice)
+trendFluctuationDF <- rbind(data.frame("date" = tokenPrices[nrow(tokenPrices),"date"], "trend" = NEUTRAL_CONST, "fluctuation" = 0.0, stringsAsFactors=FALSE), trendFluctuationDF)
+
+features <- merge(typeOfDayForVIPs, trendFluctuationDF, by.x=c("date"), by.y=c("date"), all=TRUE)
+```
+We will consider date and corresponding predicted price to extract rows where predicted price chnage is 0
+
+```{r, warning=FALSE}
+output_values <- tokenPrices[,c(1,8,9,10)]
+
+features <- merge(features,output_values, by.x = "date" , by.y = "date")
+
+sapply(features, class)
+
+change <- subset(features, predicted_price_change == 0)
+features[is.na(features$vip_tokens_transacted), "vip_tokens_transacted"] <- 0.0
+features[features$vip_tokens_transacted == 0, "vip_day_type"] <- "N"
+```
+We will give numerical values to entries in features as follows.
+```{r, warning=FALSE}
+features[features$vip_day_type  == "B", "todaysPrediction"] <- 0
+features[features$vip_day_type  == "S", "todaysPrediction"] <- 1
+features[features$vip_day_type  == "N", "todaysPrediction"] <- -1
+
+
+features[features$trend  == "I", "todays_trend"] <- 0
+features[features$trend  == "D", "todays_trend"] <- 1
+features[features$trend  == "N", "todays_trend"] <- -1
+sapply(features, class)
+```
+To clean the data we remove values where fluctutaion is greater than 5, and remove values where profitability is less than -4
+
+```{r, warning=FALSE, echo=FALSE}
+
+features <- subset(features, fluctuation < 5)
+
+features <- subset(features, profitability > -4)
+features <- subset(features,  features$profitability < 3 )
+```
+####The regression Model:
+```{r, warning=FALSE}
+fit <- lm(predicted_price ~todays_trend + fluctuation+todaysPrediction, data = features)
+
+summary(fit)
+
+print(fit)
+
+
+```
+
+#5. Conclusion:
 This is the summarization for each part of the process.
 
-Number of times user sells a token follows a negative binomial distribution with mean of `r meanOfDistribution` and a variance of `r varianceOfDistibution`.
+Number of times user **sells** a token follows a **negative binomial distribution** with mean of **`r meanOfDistribution`** and a variance of **`r varianceOfDistibution`**.
 
-Number of times user buys a token follows a negative binomial distribution with mean of `r meanOfDistribution2` and a variance of `r varianceOfDistibution2`.
+Number of times user **buys** a token follows a **negative binomial distribution** with mean of **`r meanOfDistribution2`** and a variance of **`r varianceOfDistibution2`**.
 
-From the graph it can be inferred that as the number of transactions in a layer increases, the total amount transacted increases. Since the total amount(in USD) is calculated using the closing price of the days the transactions were made, we can conclude that the number of transactions in each layer is positively correlated to the closing price.
+From the graph it can be inferred that as the **number of transactions in a layer increases, the total amount transacted increases.** Since the total amount(in USD) is calculated using the closing price of the days the transactions were made, we can conclude that the **number of transactions in each layer is positively correlated to the closing price**.
+
+We also calculated the **correlation values** for a set of numbers and narrowed down to 31 as it gives the highest correlation value of **`r cor_value[2]`**.
 
 From the plots and the estimated parameters, we found that **Weibull distribution** closely fits our data. Hence, the distribution of the number of unique tokens that users have invested in (apart from our primary token) follows a Weibull distribution.
+
+Using the 4 features mentioned above we can observe that the regression model predicts the price on a particular day t based on the prices of day t-1.
+
+The github repository for the project can be found at https://github.com/pavithraconnect/EthereumProject
