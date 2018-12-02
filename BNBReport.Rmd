@@ -1,5 +1,5 @@
 ---
-title: 'Project 1 : Final Report'
+title: 'Final Project Report'
 author:
 - Anand Balan (axb173130@utdallas.edu)
 - Gunjan Munjal (gxm171430@utdallas.edu)
@@ -18,10 +18,10 @@ In the Ethereum blockchain, instead of mining for bitcoin, miners work to earn E
 There is a second type of token that is used to pay miners fees for including transactions in their block, it is called gas, and every smart contract execution requires a certain amount of gas to be sent along with it to entice miners to put it in the blockchain.
 
 #ERC20
-ERC stands for Ethereum Request for Comments. It an official protocol for proposing improvements to the Ethereum(ETH) network. '20' is the unique proposal ID number. It defines a set of rules which need to be met in order for a token to be accepted and called an 'ERC20 Token'. The standard rules apply to all ERC20 Tokens since these rules are required to interact with each other on the Ethereum network. 
+ERC stands for Ethereum Request for Comments. It is an official protocol for proposing improvements to the Ethereum(ETH) network. '20' is the unique proposal ID number. It defines a set of rules which need to be met in order for a token to be accepted and called an 'ERC20 Token'. The standard rules apply to all ERC20 Tokens since these rules are required to interact with each other on the Ethereum network. 
 
 #Primary Token
-The primary token we have considered for the data analysis is the 10th largest token, Binance Coin Token. The Binance Coin (BNB) is the native coin of the Binance cryptocurrency trading platform. The coin can be used to pay trading fees, transaction fees and listing fees on the platform. Binance incentivizes payment of fees via BNB by providing a substantial discount. BNB runs natively on the Ethereum blockchain and follows the ERC20 token standard. 
+The primary token we have considered for the data analysis is the Binance Coin Token. The Binance Coin (BNB) is the native coin of the Binance cryptocurrency trading platform. The coin can be used to pay trading fees, transaction fees and listing fees on the platform. Binance incentivizes payment of fees via BNB by providing a substantial discount. BNB runs natively on the Ethereum blockchain and follows the ERC20 token standard. 
 The token was established with a total supply of 200 million. 
 The BNB token itself has multiple forms of utility, essentially being the underlying gas that powers the Binance Ecosystem. The current most prominent use cases include using BNB to:
 
@@ -255,7 +255,7 @@ tokenPrices$volume <- as.numeric(gsub(",", "", tokenPrices$volume))
 tokenPrices <- data.frame(tokenPrices$date, tokenPrices$close, tokenPrices$volume, tokenPrices$volume / tokenPrices$close )
 names(tokenPrices)<-c("date","close", "volume","tokens_transacted")
 ```
-The data was available for different range of dates so the merger was done by taking the intersection of the date column in the two given files.
+The data was available for different range of dates so a merger was done by taking the intersection of the date column in the two given files.
 
 ```{r, warning = FALSE}
 tokenPrices <- tokenPrices[tokenPrices$date %in% unique(binanceTokenGraph$date), ]
@@ -273,7 +273,7 @@ tokenPrices <- tokenPrices[with(tokenPrices, order(date)),]
 binanceTokenGraph <- binanceTokenGraph[with(binanceTokenGraph, order(date)),]
 ```
 
-To calculate the number of transactions in respective layers and the cumulative amount of transactions (in USD) in each layer, we follow the algorithm states below-
+To calculate the number of transactions in respective layers and the cumulative amount of transactions (in USD) in each layer, we follow the algorithm stated below-
 
 1. Filter all transactions for the layer.
 2. Calculate the total number of tokens transacted for each day in the layer.
@@ -483,9 +483,11 @@ This part of the project  was dedicated towards creating a multiple linear regre
 2. How many other unique users follow these "Most Important Users" behavior on the previous day?
 3. What was the predominant trend on the previous day? Was the token price decreasing mostly or increasing?
 4. What is the quantum of the increase or decrease in the price fluctuation on the previous day?
+
+
 Find an intersection between the date ranges in both the data set and sort the dataframe in decreasing order of date.
 
-We will be using the same token that we used for study in the previous projects.
+We will be using the same token that we used for study in the previous sections.
 
 ```{r, warning = FALSE}
 NEUTRAL_CONST = "N"
@@ -701,18 +703,16 @@ print(fit)
 ```
 
 #5. Conclusion:
-This is the summarization for each part of the process.
+To summarize the whole process -  
 
-Number of times user **sells** a token follows a **negative binomial distribution** with mean of **`r meanOfDistribution`** and a variance of **`r varianceOfDistibution`**.
+Number of times user **sells** a token follows a **negative binomial distribution** with a mean of **`r meanOfDistribution`** and a variance of **`r varianceOfDistibution`**.
 
-Number of times user **buys** a token follows a **negative binomial distribution** with mean of **`r meanOfDistribution2`** and a variance of **`r varianceOfDistibution2`**.
+Number of times user **buys** a token follows a **negative binomial distribution** with a mean of **`r meanOfDistribution2`** and a variance of **`r varianceOfDistibution2`**.
 
-From the graph it can be inferred that as the **number of transactions in a layer increases, the total amount transacted increases.** Since the total amount(in USD) is calculated using the closing price of the days the transactions were made, we can conclude that the **number of transactions in each layer is positively correlated to the closing price**.
+We found that as **the number of transactions in a layer increases, the total amount transacted increases.** Since the total amount(in USD) is calculated using the closing price of the days when the transactions were made, we can conclude that the **number of transactions in each layer is positively correlated to the closing price**.
 
 We also calculated the **correlation values** for a set of numbers and narrowed down to 31 as it gives the highest correlation value of **`r cor_value[2]`**.
 
 From the plots and the estimated parameters, we found that **Weibull distribution** closely fits our data. Hence, the distribution of the number of unique tokens that users have invested in (apart from our primary token) follows a Weibull distribution.
 
-Using the 4 features mentioned above we can observe that the regression model predicts the price on a particular day t based on the prices of day t-1.
-
-The github repository for the project can be found at https://github.com/pavithraconnect/EthereumProject
+Using the 4 features mentioned above, we can observe that the regression model predicts the price change on a particular day t using the characteristics of day t-1 with a model adequacy, denoted by r-squared, of 0.4773 or 47.73%.
