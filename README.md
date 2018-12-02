@@ -19,3 +19,7 @@ Create layers of transactions with increasing amounts? This descriptive statisti
 Find the most active buyers and sellers in your primary token network, and track them in other tokens. Fit a distribution for the number of unique tokens they invest in.
 
 Extract at least three features from the token network at day t−1 and create a multiple linear regression model to explain price return on day t. 
+
+The link to the project's html file can be found at 
+
+http://www.utdallas.edu/~pxk170930/BNBReport.html
